@@ -1,0 +1,54 @@
+#!/bin/bash
+#title           :vps.sh
+#description     :Reboot vps
+#author		 :ownercz
+#date            :20181309
+#version         :1.0
+#usage		 :bash vps.sh
+#notes           :VPS01 and VPS02
+#bash_version    :4.1.5(1)-release
+#1) Pokud tun01/tun02 má ping na vps , ale není tunnel > restartuje se
+#2) Pokud vpsky mají ping na con, ale nemají vpn connection > restartují se
+#==============================================================================
+
+function ping_home() {
+  if ping -c1 -W 2 {{ home_ip }} &> /dev/null
+then
+  echo 1
+else
+  echo 0
+fi
+}
+
+function ping_tunnel() {
+  if ping -c10 -W 2 {{ router_ip}} &> /dev/null
+then
+  echo 1
+else
+  echo 0
+fi
+}
+
+function uptime_int()
+{
+  upSeconds="$(cat /proc/uptime | grep -o '^[0-9]\+')"
+  upMins=$((${upSeconds} / 60))
+  if (( upMins > 5 ))
+  then
+	echo "301"
+  else
+   echo "10"
+  fi
+}
+
+uptimeint=$(uptime_int)
+pingtunnel=$(ping_tunnel)
+pinghome=$(ping_home)
+
+if [ "$uptimeint" -gt 300 ]; then
+  if [ "$pinghome" -eq 1 ]; then
+    if [ "$pingtunnel" -eq 0 ]; then
+      reboot now
+    fi
+  fi
+fi

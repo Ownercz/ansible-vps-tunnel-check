@@ -1,0 +1,63 @@
+#je potreba vymenit klice mezi tun a vps
+
+- name: VPS02 script
+  template:
+    src: templates/vps.j2
+    dest: "/root/vps.sh"
+  when: "'vps02' in inventory_hostname_short"
+- cron:
+    name: "VPS02 check"
+    job: "/root/vps.sh > /dev/null 2>&1"
+    user: root
+  when: "'vps02' in inventory_hostname_short"
+
+- name: Changing permissions of "/root/vps.sh" and adding executable bit "+x"
+  file: dest=/root/vps.sh mode=a+x
+  when: "'vps02' in inventory_hostname_short"
+
+- name: TUN02 script
+  template:
+    src: templates/tun.j2
+    dest: "/root/tun.sh"
+  when: "'tun02' in inventory_hostname_short"
+- cron:
+    name: "TUN02 check"
+    job: "/root/tun.sh > /dev/null 2>&1"
+    user: root
+  when: "'tun02' in inventory_hostname_short"
+
+- name: Changing permissions of "/root/tun.sh" and adding executable bit "+x"
+  file: dest=/root/tun.sh mode=a+x
+  when: "'tun02' in inventory_hostname_short"
+
+  
+  
+- name: vps03 script
+  template:
+    src: templates/vps.j2
+    dest: "/root/vps.sh"
+  when: "'vps03' in inventory_hostname_short"
+- cron:
+    name: "vps03 check"
+    job: "/root/vps.sh > /dev/null 2>&1"
+    user: root
+  when: "'vps03' in inventory_hostname_short"
+
+- name: Changing permissions of "/root/vps.sh" and adding executable bit "+x"
+  file: dest=/root/vps.sh mode=a+x
+  when: "'vps03' in inventory_hostname_short"
+  
+- name: tun03 script
+  template:
+    src: templates/tun.j2
+    dest: "/root/tun.sh"
+  when: "'tun03' in inventory_hostname_short"
+- cron:
+    name: "tun03 check"
+    job: "/root/tun.sh > /dev/null 2>&1"
+    user: root
+  when: "'tun03' in inventory_hostname_short"
+
+- name: Changing permissions of "/root/tun.sh" and adding executable bit "+x"
+  file: dest=/root/tun.sh mode=a+x
+  when: "'tun03' in inventory_hostname_short"

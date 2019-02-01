@@ -1,0 +1,47 @@
+#!/bin/bash
+#title           :vps.sh
+#description     :Reboot tun
+#author		 :ownercz
+#date            :20181309
+#version         :1.0
+#usage		 :bash vps.sh
+#notes           :TUN01 and TUN02
+#bash_version    :4.1.5(1)-release
+#1) Pokud tun01/tun02 má ping na vps , ale není tunnel > restartuje se
+#2) Pokud vpsky mají ping na con, ale nemají vpn connection > restartují se
+#==============================================================================
+
+function check_vps() {
+  if ping -c10 -W 2 172.27.224.1 &> /dev/null
+then
+  echo 1
+else
+  echo 0
+fi
+}
+
+function uptime_int()
+{
+  upSeconds="$(cat /proc/uptime | grep -o '^[0-9]\+')"
+  upMins=$((${upSeconds} / 60))
+  if (( upMins > 5 ))
+  then
+	echo "301"
+  else
+   echo "10"
+  fi
+}
+checkvps=$(check_vps)
+if systemctl status openvpn@client | grep -i "no route to host" ; then
+  if [ "$checkvps" -eq 0 ]; then
+	if [ "$uptimeint" -gt 300 ]; then
+		reboot now
+	fi
+  fi
+else
+  if [ "$checkvps" -eq 0 ]; then
+	if [ "$uptimeint" -gt 300 ]; then
+		reboot now
+	fi
+  fi
+fi
